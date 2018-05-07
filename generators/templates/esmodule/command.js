@@ -1,8 +1,14 @@
+/**
+ * @class <%= commandname %>
+ *
+ * @author <%=author %> <<%=email %>>
+ * @copyright MedTime - 2017 copyright
+ */
 'use strict';
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.HttpClientBase = exports.<%= comandName %> = undefined;
+exports.HttpClientBase = exports.<%= commandname %> = undefined;
 
 
 var _stringify = require('babel-runtime/core-js/json/stringify');
@@ -18,7 +24,7 @@ exports.HttpClientBase = HttpClientBase;
 
 
 
-class <%= comandName %> extends HttpClientBase {
+class <%= commandname %> extends HttpClientBase {
     // @TODO
     /**
      * @constructor
@@ -35,5 +41,5 @@ class <%= comandName %> extends HttpClientBase {
 
     }
 }
-exports.<%= comandName %> = <%= comandName %>;
-<%= comandName %>.prototype._data = null;
+exports.<%= commandname %> = <%= commandname %>;
+<%= commandname %>.prototype._data = null;

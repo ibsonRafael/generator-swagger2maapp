@@ -1,3 +1,9 @@
+/**
+ * @class <%= classname %>HandlerEffects
+ *
+ * @author <%=author %> <<%=email %>>
+ * @copyright MedTime - 2017 copyright
+ */
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Actions, Effect } from '@ngrx/effects';

@@ -1,3 +1,9 @@
+/**
+ * @class <%= actioname %>
+ *
+ * @author <%=author %> <<%=email %>>
+ * @copyright MedTime - 2017 copyright
+ */
 import { Action } from '@ngrx/store';
 import {<%= subcontext %>ActionTypes} from '../do-not-know';
 
