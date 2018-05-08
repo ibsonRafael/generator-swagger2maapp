@@ -1,6 +1,6 @@
 {
   "name": "generator-swagger2maapp",
-  "version": "0.1.npm version",
+  "version": "0.1.0",
   "description": "Generates Redux mediator, Actions, Handlers and ES6 Module with Commands from Swagger spec",
   "author": {
     "name": "Ibson R G Machado",
