@@ -147,43 +147,43 @@ module.exports = Generator.extend({
 
         // Generating models
         for (var definition in generator.api.definitions) {
-            log(chalk.blue('(II)') + chalk.red('[ Angular  ]') + ' Creating model: ' + generator.api.definitions[definition]['modelName'] + '...');
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Creating model: ' + generator.api.definitions[definition]['modelName'] + '...');
         }
 
         // Generating components
         for (var component in generator.api.components) {
             var componentName = (component.replace(/\.?([A-Z]+)/g, function (x,y){return "-" + y.toLowerCase()}).replace(/^-/, ""))
             componentName = componentName + '.component.ts';
-            log(chalk.blue('(II)') + chalk.red('[ Angular  ]') + ' Creating Component' + componentName + '...');
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Creating Component: ' + componentName + '...');
         }
 
         // Creating actions
         for(var tag in generator._tags) {
-            log(chalk.blue('(II)') + chalk.red('[ Angular  ]') + ' Creating actions and effects for:' + chalk.red(generator._tags[tag]) + '');
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Creating actions and effects for: ' + chalk.red(generator._tags[tag]) + '');
             for (var path in generator.api.paths) {
                 for (var method in generator.api.paths[path]) {
                     if (generator._tags[tag] == generator.api.paths[path][method].tags[0]) {
                         var operation = generator.api.paths[path][method];
                         var basename = operation.operationId;
-                        log(chalk.blue('(II)') + chalk.red('[ Angular  ]') + '  For operation:' + chalk.red(basename) + '');
+                        log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '    For operation: ' + chalk.red(basename) + '');
                         basename = (basename.replace(/\.?([A-Z]+)/g, function (x, y) {
                             return "-" + y.toLowerCase()
                         }).replace(/^-/, ""));
 
                         var actionname = basename + '.actions.ts';
                         var effectname = basename + '.effects.ts';
-                        log(chalk.blue('(II)') + chalk.red('[ Angular  ]') + '   ' + chalk.red(actionname) + '');
-                        log(chalk.blue('(II)') + chalk.red('[ Angular  ]') + '   ' + chalk.red(effectname) + '');
+                        log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '      ' + chalk.red(actionname) + '');
+                        log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '      ' + chalk.red(effectname) + '');
 
                         actionname = basename + '-done.actions.ts';
                         effectname = basename + '-done.effects.ts';
-                        log(chalk.blue('(II)') + chalk.red('[ Angular  ]') + '   ' + chalk.red(actionname) + '');
-                        log(chalk.blue('(II)') + chalk.red('[ Angular  ]') + '   ' + chalk.red(effectname) + '');
+                        log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '      ' + chalk.red(actionname) + '');
+                        log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '      ' + chalk.red(effectname) + '');
 
                         actionname = basename + '-error.actions.ts';
                         effectname = basename + '-error.effects.ts';
-                        log(chalk.blue('(II)') + chalk.red('[ Angular  ]') + '   ' + chalk.red(actionname) + '');
-                        log(chalk.blue('(II)') + chalk.red('[ Angular  ]') + '   ' + chalk.red(effectname) + '');
+                        log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '   ' + chalk.red(actionname) + '');
+                        log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '   ' + chalk.red(effectname) + '');
                     }
                 }
             }
@@ -208,11 +208,11 @@ module.exports = Generator.extend({
 
         // Creating ES7 Business Module folders
         // Generating commands classes
-        log(chalk.blue('(II)') + chalk.blue('[es6 module]') + ' Creating modules');
+        log(chalk.blue('(II) ') + chalk.blue('[es6 module]') + '  Creating modules');
         for(var tag in generator._tags) {
             var componentname = (generator._tags[tag].replace(/\.?([A-Z]+)/g, function (x,y){return "-" + y.toLowerCase()}).replace(/^-/, ""))
             componentname = componentname + '.module.js';
-            log(chalk.blue('(II)') + chalk.blue('[es6 module]') + '  Creating module: ' + chalk.yellow(componentname) + '');
+            log(chalk.blue('(II) ') + chalk.blue('[es6 module]') + '    Creating module: ' + chalk.yellow(componentname) + '');
 
             for (var path in generator.api.paths) {
                 for (var method in generator.api.paths[path]) {
@@ -224,7 +224,7 @@ module.exports = Generator.extend({
                         }).replace(/^-/, ""));
 
                         var commandname = basename + '-command.js';
-                        log(chalk.blue('(II)') + chalk.blue('[es6 module]') + '   Creating Command Class ' + chalk.yellow(commandname) + '');
+                        log(chalk.blue('(II) ') + chalk.blue('[es6 module]') + '      Creating Command Class ' + chalk.yellow(commandname) + '');
                     }
                 }
             }
