@@ -129,6 +129,7 @@ module.exports = Generator.extend({
         // }
 
         //### Generate files - BEGIN ##########################################################################/
+        var basePath = './';
 
         // Creating dockers containers (Dockerfile)
             // RabbitMQ (Event Bus)
@@ -144,22 +145,45 @@ module.exports = Generator.extend({
         // Creating dockers compuser (yaml)
 
         // Creating Angular folders
+        var angularModule = 'Unknow';
+        if (typeof(generator.api['x-module']) != 'undefined' && generator.api['x-module'] != null && generator.api['x-module'] != ''){
+            angularModule = generator.api['x-module'];
+        }
+        var angularPath = basePath + 'front-end/src/' + angularModule + '/';
+
+        var angularInterface = 'entities/interface/';
+        var angularModels    = 'entities/models/';
+        var angularComponents= 'components/';
+        var angularMensager  = 'menssager/';
 
         // Generating models
         for (var definition in generator.api.definitions) {
-            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Creating model: ' + generator.api.definitions[definition]['modelName'] + '...');
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Creating interface: ' + chalk.yellow(angularPath + angularInterface + generator.api.definitions[definition]['modelName']) + '');
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Creating model:     ' + chalk.yellow(angularPath + angularModels + generator.api.definitions[definition]['modelName']) + '');
         }
 
         // Generating components
         for (var component in generator.api.components) {
             var componentName = (component.replace(/\.?([A-Z]+)/g, function (x,y){return "-" + y.toLowerCase()}).replace(/^-/, ""))
-            componentName = componentName + '.component.ts';
-            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Creating Component: ' + componentName + '...');
+            componentName = componentName + '';
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Creating Smart Component: ' + chalk.yellow(  angularPath + angularComponents + componentName + '.component.ts') );
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '     Creating Dumb Component: ' + chalk.yellow(angularPath + angularComponents + componentName + '-list.component.ts'));
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '     Creating Dumb Component: ' + chalk.yellow(angularPath + angularComponents + componentName + '-edit.component.ts'));
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '     Creating Dumb Component: ' + chalk.yellow(angularPath + angularComponents + componentName + '-view.component.ts'));
         }
 
         // Creating actions
         for(var tag in generator._tags) {
             log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Creating actions and effects for: ' + chalk.red(generator._tags[tag]) + '');
+
+            var actionPath = generator._tags[tag];
+            actionPath = angularPath + angularMensager + (actionPath.replace(/\.?([A-Z]+)/g, function (x,y){return "-" + y.toLowerCase()}).replace(/^-/, "")) + '-messager/';
+
+            var actionTypeEnumName = generator._tags[tag] + 'ActionTypes';
+            var actionTypeEnumFileName = (actionTypeEnumName.replace(/\.?([A-Z]+)/g, function (x,y){return "-" + y.toLowerCase()}).replace(/^-/, "")) + '.ts';
+
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '    Action Types: ' + chalk.yellow(actionTypeEnumName) + ' on ' + chalk.yellow(actionPath + actionTypeEnumFileName));
+
             for (var path in generator.api.paths) {
                 for (var method in generator.api.paths[path]) {
                     if (generator._tags[tag] == generator.api.paths[path][method].tags[0]) {
@@ -172,18 +196,18 @@ module.exports = Generator.extend({
 
                         var actionname = basename + '.actions.ts';
                         var effectname = basename + '.effects.ts';
-                        log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '      ' + chalk.red(actionname) + '');
-                        log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '      ' + chalk.red(effectname) + '');
+                        log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '      ' + chalk.yellow(actionPath + actionname) + '');
+                        log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '      ' + chalk.yellow(actionPath + effectname) + '');
 
                         actionname = basename + '-done.actions.ts';
                         effectname = basename + '-done.effects.ts';
-                        log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '      ' + chalk.red(actionname) + '');
-                        log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '      ' + chalk.red(effectname) + '');
+                        log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '      ' + chalk.yellow(actionPath + actionname) + '');
+                        log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '      ' + chalk.yellow(actionPath + effectname) + '');
 
                         actionname = basename + '-error.actions.ts';
                         effectname = basename + '-error.effects.ts';
-                        log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '   ' + chalk.red(actionname) + '');
-                        log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '   ' + chalk.red(effectname) + '');
+                        log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '      ' + chalk.yellow(actionPath + actionname) + '');
+                        log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '      ' + chalk.yellow(actionPath + effectname) + '');
                     }
                 }
             }
@@ -208,7 +232,9 @@ module.exports = Generator.extend({
 
         // Creating ES7 Business Module folders
         // Generating commands classes
-        log(chalk.blue('(II) ') + chalk.blue('[es6 module]') + '  Creating modules');
+        log(chalk.blue( '(II) ') + chalk.blue('[es6 module]') + '  Creating modules');
+        log(chalk.green('(==) ') + chalk.blue('[es6 module]') + '    Creating module: ' + chalk.yellow('HttpBaseClient') + '');
+
         for(var tag in generator._tags) {
             var componentname = (generator._tags[tag].replace(/\.?([A-Z]+)/g, function (x,y){return "-" + y.toLowerCase()}).replace(/^-/, ""))
             componentname = componentname + '.module.js';
