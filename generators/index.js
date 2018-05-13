@@ -84,6 +84,8 @@ module.exports = Generator.extend({
 
                     var modelName = definition.split('.');
                     modelName = modelName[modelName.length-1];
+                    api.definitions[definition]['baseName'] = modelName;
+
                     modelName = modelName + '.model.ts';
                     api.definitions[definition]['modelName'] = (modelName.replace(/\.?([A-Z]+)/g, function (x,y){return "-" + y.toLowerCase()}).replace(/^-/, ""));
 
@@ -149,27 +151,164 @@ module.exports = Generator.extend({
         if (typeof(generator.api['x-module']) != 'undefined' && generator.api['x-module'] != null && generator.api['x-module'] != ''){
             angularModule = generator.api['x-module'];
         }
+
+        try {
+            fs.mkdirSync(basePath + 'front-end/');
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(basePath + 'front-end/') + ') created');
+        } catch (err) {
+            log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(basePath + 'front-end/') + ') already exists');
+            log(err);
+        }
+        try {
+            fs.mkdirSync(basePath + 'front-end/src/');
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(basePath + 'front-end/src/') + ') created');
+        } catch (err) {
+            log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(basePath + 'front-end/src/') + ') already exists');
+            log(err);
+        }
+
         var angularPath = basePath + 'front-end/src/' + angularModule + '/';
+        try {
+            fs.mkdirSync(angularPath);
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath) + ') created');
+        } catch (err) {
+            log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath) + ') already exists');
+            log(err);
+        }
+
+        try {
+            fs.mkdirSync(angularPath + 'entities/');
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'entities/') + ') created');
+        } catch (err) {
+            log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'entities/') + ') already exists');
+            log(err);
+        }
+
 
         var angularInterface = 'entities/interface/';
         var angularModels    = 'entities/models/';
+        try {
+            fs.mkdirSync(angularPath + angularInterface);
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + angularInterface) + ') created');
+        } catch (err) {
+            log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + angularInterface) + ') already exists');
+            log(err);
+        }
+
+        try {
+            fs.mkdirSync(angularPath + angularModels);
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + angularModels) + ') created');
+        } catch (err) {
+            log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + angularModels) + ') already exists');
+            log(err);
+        }
+
+
         var angularComponents= 'components/';
+        try {
+            fs.mkdirSync(angularPath + 'components/');
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'components/') + ') created');
+        } catch (err) {
+            log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'components/') + ') already exists');
+            log(err);
+        }
+
+
         var angularMensager  = 'menssager/';
+        try {
+            fs.mkdirSync(angularPath + 'menssager/');
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'menssager/') + ') created');
+        } catch (err) {
+            log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'menssager/') + ') already exists');
+            log(err);
+        }
 
         // Generating models
         for (var definition in generator.api.definitions) {
-            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Creating interface: ' + chalk.yellow(angularPath + angularInterface + generator.api.definitions[definition]['modelName']) + '');
-            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Creating model:     ' + chalk.yellow(angularPath + angularModels + generator.api.definitions[definition]['modelName']) + '');
+            var interfacePath = angularPath + angularInterface + generator.api.definitions[definition]['modelName'].replace('.model.', '.interface.');
+            var modelPath = angularPath + angularModels + generator.api.definitions[definition]['modelName'];
+
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Creating interface: ' + chalk.yellow(interfacePath) + '');
+            generator.fs.copyTpl(
+                generator.templatePath('angular/interface.js'),
+                generator.destinationPath(interfacePath),
+                {
+                    interfacename: 'I' + generator.api.definitions[definition]['baseName'],
+                    author: generator.api.info.contact.name,
+                    email: generator.api.info.contact.email,
+                    attributes: generator.api.definitions[definition]['attributes'],
+                    api: generator.api
+                }
+            );
+
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Creating model:     ' + chalk.yellow(modelPath) + '');
+            generator.fs.copyTpl(
+                generator.templatePath('angular/model.js'),
+                generator.destinationPath(modelPath),
+                {
+                  classname: generator.api.definitions[definition]['baseName'],
+                  author: generator.api.info.contact.name,
+                  email: generator.api.info.contact.email,
+                  attributes: generator.api.definitions[definition]['attributes'],
+                  api: generator.api
+                }
+            );
         }
 
         // Generating components
         for (var component in generator.api.components) {
             var componentName = (component.replace(/\.?([A-Z]+)/g, function (x,y){return "-" + y.toLowerCase()}).replace(/^-/, ""))
-            componentName = componentName + '';
-            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Creating Smart Component: ' + chalk.yellow(  angularPath + angularComponents + componentName + '.component.ts') );
-            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '     Creating Dumb Component: ' + chalk.yellow(angularPath + angularComponents + componentName + '-list.component.ts'));
-            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '     Creating Dumb Component: ' + chalk.yellow(angularPath + angularComponents + componentName + '-edit.component.ts'));
-            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '     Creating Dumb Component: ' + chalk.yellow(angularPath + angularComponents + componentName + '-view.component.ts'));
+            var componentPath = angularPath + angularComponents + componentName + '.component.ts'
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Creating Component: ' + chalk.yellow( componentPath ) );
+            // generator.fs.copyTpl(
+            //     generator.templatePath('angular/smart-component.js'),
+            //     generator.destinationPath(componentPath),
+            //     {
+            //       component: component,
+            //       author: generator.api.info.contact.name,
+            //       email: generator.api.info.contact.email,
+            //       api: generator.api
+            //     }
+            // );
+
+            var listComponentPath = angularPath + angularComponents + componentName + '-list.component.ts';
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '     Creating Dumb Component: ' + chalk.yellow(listComponentPath));
+            generator.fs.copyTpl(
+                generator.templatePath('angular/list-component.js'),
+                generator.destinationPath(listComponentPath),
+                {
+                  component: component,
+                  author: generator.api.info.contact.name,
+                  email: generator.api.info.contact.email,
+                  api: generator.api
+                }
+            );
+
+            var editComponentPath = angularPath + angularComponents + componentName + '-edit.component.ts';
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '     Creating Dumb Component: ' + chalk.yellow(editComponentPath));
+            generator.fs.copyTpl(
+                generator.templatePath('angular/edit-component.js'),
+                generator.destinationPath(editComponentPath),
+                {
+                  component: component + 'EditComponent',
+                  author: generator.api.info.contact.name,
+                  email: generator.api.info.contact.email,
+                  api: generator.api
+                }
+            );
+
+            var viewComponentPath = angularPath + angularComponents + componentName + '-view.component.ts';
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '     Creating Dumb Component: ' + chalk.yellow(viewComponentPath));
+            generator.fs.copyTpl(
+                generator.templatePath('angular/smart-component.js'),
+                generator.destinationPath(viewComponentPath),
+                {
+                  component: component + 'ViewComponent',
+                  author: generator.api.info.contact.name,
+                  email: generator.api.info.contact.email,
+                  api: generator.api
+                }
+            );
         }
 
         // Creating actions
