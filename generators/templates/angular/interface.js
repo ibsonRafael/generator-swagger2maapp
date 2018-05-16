@@ -6,5 +6,5 @@
  */
 export interface <%=interfacename %> {
 <% for (var attribute in attributes) { %>
-  <%=attributes[attribute]%>;<% } %>
+  <%=attributes[attribute].nameCamelCase%>: <%=attributes[attribute].type%>;<% } %>
 }

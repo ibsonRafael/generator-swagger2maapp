@@ -89,10 +89,64 @@ module.exports = Generator.extend({
                     modelName = modelName + '.model.ts';
                     api.definitions[definition]['modelName'] = (modelName.replace(/\.?([A-Z]+)/g, function (x,y){return "-" + y.toLowerCase()}).replace(/^-/, ""));
 
+                    var required_items = [];
+                    log(typeof( api.definitions[definition].required ));
                     for (var attributes in api.definitions[definition].properties) {
+                        if(
+                            typeof( api.definitions[definition].required ) != "undefined" &&
+                            api.definitions[definition].required.indexOf( attributes ) > -1
+                        ) {
+                            required_items.push(attributes.charAt(0).toLowerCase() + attributes.slice(1));
+                        }
+
+                        var attributeType = 'any';
+                        switch (api.definitions[definition].properties[attributes].type) {
+                            case 'integer':
+                                attributeType = 'numeric';
+                                break;
+
+                            case 'boolean':
+                                attributeType = 'boolean';
+                                break;
+
+                            case 'string':
+                                attributeType = 'string';
+                                break;
+
+                            case 'object':
+                                attributeType = 'any';
+                                break;
+
+                            case 'array':
+                                attributeType = 'Array\<any\>';
+                                break;
+
+                            default:
+                                attributeType = api.definitions[definition].type;
+                        }
+
                         api.definitions[definition]['originalAttributes'].push(attributes);
-                        api.definitions[definition]['attributes'].push(attributes.charAt(0).toLowerCase() + attributes.slice(1));
+                        api.definitions[definition]['attributes'].push({
+                            description: 'Can be any value - string, number, boolean, array or object.',
+                            nameCamelCase: attributes.charAt(0).toLowerCase() + attributes.slice(1),
+                            namePascalCase: attributes,
+
+                            required: false,
+                            readOnly: true, // Returned by GET, not used in POST/PUT/PATCH
+                            writeOnly: true, // Used in POST/PUT/PATCH, not returned by GET
+                            type: attributeType,
+                            nullable: true,
+                            minLength: 5, maxLength: 25, // To string
+                            pattern: '^\d{3}-\d{2}-\d{4}$', // To strings
+                            format: 'hostname', // To string
+
+                            minimum: 1, maximum: 10, // To numeric
+
+                            minItems: 1, maxItems: 10, //To arrays
+                            uniqueItems: true //To arrays, eg.:  Case:[1, 2, 3] – valid,  case:[1, 1, 3] – not valid.
+                        });
                     }
+                    api.definitions[definition]['required_items'] = required_items;
                 }
                 //console.log(api.definitions);
 
@@ -246,11 +300,13 @@ module.exports = Generator.extend({
                 generator.templatePath('angular/model.js'),
                 generator.destinationPath(modelPath),
                 {
-                  classname: generator.api.definitions[definition]['baseName'],
-                  author: generator.api.info.contact.name,
-                  email: generator.api.info.contact.email,
-                  attributes: generator.api.definitions[definition]['attributes'],
-                  api: generator.api
+                    interfacename: 'I' + generator.api.definitions[definition]['baseName'],
+                    classname: generator.api.definitions[definition]['baseName'],
+                    author: generator.api.info.contact.name,
+                    email: generator.api.info.contact.email,
+                    attributes: generator.api.definitions[definition]['attributes'],
+                    required_items: generator.api.definitions[definition]['required_items'],
+                    api: generator.api
                 }
             );
         }
