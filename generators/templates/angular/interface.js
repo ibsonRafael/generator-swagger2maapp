@@ -5,6 +5,7 @@
  * @copyright ? - 2017 copyright
  */
 export interface <%=interfacename %> {
-<% for (var attribute in attributes) { %>
-  <%=attributes[attribute].nameCamelCase%>: <%=attributes[attribute].type%>;<% } %>
+    <% for (var attribute in attributes) { %>
+    <%=attributes[attribute].nameCamelCase%>: <%-attributes[attribute].type%>;<% } %>
+
 }

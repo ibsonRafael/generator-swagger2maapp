@@ -92,17 +92,10 @@ module.exports = Generator.extend({
                     var required_items = [];
                     log(typeof( api.definitions[definition].required ));
                     for (var attributes in api.definitions[definition].properties) {
-                        if(
-                            typeof( api.definitions[definition].required ) != "undefined" &&
-                            api.definitions[definition].required.indexOf( attributes ) > -1
-                        ) {
-                            required_items.push(attributes.charAt(0).toLowerCase() + attributes.slice(1));
-                        }
-
                         var attributeType = 'any';
                         switch (api.definitions[definition].properties[attributes].type) {
                             case 'integer':
-                                attributeType = 'numeric';
+                                attributeType = 'number';
                                 break;
 
                             case 'boolean':
@@ -118,11 +111,23 @@ module.exports = Generator.extend({
                                 break;
 
                             case 'array':
-                                attributeType = 'Array\<any\>';
+                                attributeType = 'Array<any>';
                                 break;
 
                             default:
                                 attributeType = api.definitions[definition].type;
+                        }
+
+                        if(
+                            typeof( api.definitions[definition].required ) != "undefined" &&
+                            api.definitions[definition].required.indexOf( attributes ) > -1
+                        ) {
+                            required_items.push(
+                                {
+                                    nameCamelCase: attributes.charAt(0).toLowerCase() + attributes.slice(1),
+                                    type: attributeType
+                                }
+                            );
                         }
 
                         api.definitions[definition]['originalAttributes'].push(attributes);
@@ -268,19 +273,42 @@ module.exports = Generator.extend({
         }
 
 
-        var angularMensager  = 'menssager/';
+        var angularMensager  = 'store/';
         try {
-            fs.mkdirSync(angularPath + 'menssager/');
+            fs.mkdirSync(angularPath + 'store/');
             log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'menssager/') + ') created');
         } catch (err) {
             log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'menssager/') + ') already exists');
             log(err);
         }
 
+        try {
+            fs.mkdirSync(angularPath + 'store/actions/');
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'store/actions/') + ') created');
+        } catch (err) {
+            log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'store/actions/') + ') already exists');
+            log(err);
+        }
+        try {
+            fs.mkdirSync(angularPath + 'store/effects/');
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'store/effects/') + ') created');
+        } catch (err) {
+            log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'store/effects/') + ') already exists');
+            log(err);
+        }
+        try {
+            fs.mkdirSync(angularPath + 'store/reducers/');
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'store/reducers/') + ') created');
+        } catch (err) {
+            log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'store/reducers/') + ') already exists');
+            log(err);
+        }
+
         // Generating models
         for (var definition in generator.api.definitions) {
-            var interfacePath = angularPath + angularInterface + generator.api.definitions[definition]['modelName'].replace('.model.', '.interface.');
-            var modelPath = angularPath + angularModels + generator.api.definitions[definition]['modelName'];
+            var interfaceFileName = generator.api.definitions[definition]['modelName'].replace('.model.', '.interface.');
+            var interfacePath = angularPath + angularInterface + interfaceFileName;
+            var modelPath     = angularPath + angularModels + generator.api.definitions[definition]['modelName'];
 
             log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Creating interface: ' + chalk.yellow(interfacePath) + '');
             generator.fs.copyTpl(
@@ -306,6 +334,7 @@ module.exports = Generator.extend({
                     email: generator.api.info.contact.email,
                     attributes: generator.api.definitions[definition]['attributes'],
                     required_items: generator.api.definitions[definition]['required_items'],
+                    interface_filename: interfaceFileName.replace('.ts', ''),
                     api: generator.api
                 }
             );
@@ -371,41 +400,68 @@ module.exports = Generator.extend({
         for(var tag in generator._tags) {
             log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Creating actions and effects for: ' + chalk.red(generator._tags[tag]) + '');
 
-            var actionPath = generator._tags[tag];
-            actionPath = angularPath + angularMensager + (actionPath.replace(/\.?([A-Z]+)/g, function (x,y){return "-" + y.toLowerCase()}).replace(/^-/, "")) + '-messager/';
+            var actionPath = angularPath + angularMensager + 'actions/';
 
-            var actionTypeEnumName = generator._tags[tag] + 'ActionTypes';
-            var actionTypeEnumFileName = (actionTypeEnumName.replace(/\.?([A-Z]+)/g, function (x,y){return "-" + y.toLowerCase()}).replace(/^-/, "")) + '.ts';
+            var actionTypeEnumName = generator._tags[tag];
+            var actionTypeEnumFileName = (actionTypeEnumName.replace(/\.?([A-Z]+)/g, function (x,y){return "-" + y.toLowerCase()}).replace(/^-/, "")) + '.action.ts';
 
             log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '    Action Types: ' + chalk.yellow(actionTypeEnumName) + ' on ' + chalk.yellow(actionPath + actionTypeEnumFileName));
 
-            for (var path in generator.api.paths) {
-                for (var method in generator.api.paths[path]) {
-                    if (generator._tags[tag] == generator.api.paths[path][method].tags[0]) {
-                        var operation = generator.api.paths[path][method];
-                        var basename = operation.operationId;
-                        log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '    For operation: ' + chalk.red(basename) + '');
-                        basename = (basename.replace(/\.?([A-Z]+)/g, function (x, y) {
-                            return "-" + y.toLowerCase()
-                        }).replace(/^-/, ""));
-
-                        var actionname = basename + '.actions.ts';
-                        var effectname = basename + '.effects.ts';
-                        log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '      ' + chalk.yellow(actionPath + actionname) + '');
-                        log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '      ' + chalk.yellow(actionPath + effectname) + '');
-
-                        actionname = basename + '-done.actions.ts';
-                        effectname = basename + '-done.effects.ts';
-                        log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '      ' + chalk.yellow(actionPath + actionname) + '');
-                        log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '      ' + chalk.yellow(actionPath + effectname) + '');
-
-                        actionname = basename + '-error.actions.ts';
-                        effectname = basename + '-error.effects.ts';
-                        log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '      ' + chalk.yellow(actionPath + actionname) + '');
-                        log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '      ' + chalk.yellow(actionPath + effectname) + '');
-                    }
+            generator.fs.copyTpl(
+                generator.templatePath('angular/action.js'),
+                generator.destinationPath(actionPath + actionTypeEnumFileName),
+                {
+                    author: generator.api.info.contact.name,
+                    email: generator.api.info.contact.email,
+                    tag: generator._tags[tag],
+                    paths: generator.api.paths,
                 }
-            }
+            );
+
+
+            var effectPath = angularPath + angularMensager + 'effects/';
+            var actionEffectsFileName = (actionTypeEnumName.replace(/\.?([A-Z]+)/g, function (x,y){return "-" + y.toLowerCase()}).replace(/^-/, "")) + '.effect.ts';
+            generator.fs.copyTpl(
+                generator.templatePath('angular/effect.js'),
+                generator.destinationPath(effectPath + actionEffectsFileName),
+                {
+                    author: generator.api.info.contact.name,
+                    email: generator.api.info.contact.email,
+                    tag: generator._tags[tag],
+                    paths: generator.api.paths,
+
+                    action_filename: actionTypeEnumFileName,
+                    definitions: generator.api.definitions,
+                }
+            );
+
+            // for (var path in generator.api.paths) {
+            //     for (var method in generator.api.paths[path]) {
+            //         if (generator._tags[tag] == generator.api.paths[path][method].tags[0]) {
+            //             var operation = generator.api.paths[path][method];
+            //             var basename = operation.operationId;
+            //             log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '    For operation: ' + chalk.red(basename) + '');
+            //             basename = (basename.replace(/\.?([A-Z]+)/g, function (x, y) {
+            //                 return "-" + y.toLowerCase()
+            //             }).replace(/^-/, ""));
+            //
+            //             var actionname = basename + '.actions.ts';
+            //             var effectname = basename + '.effects.ts';
+            //             log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '      ' + chalk.yellow(actionPath + actionname) + '');
+            //             log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '      ' + chalk.yellow(actionPath + effectname) + '');
+            //
+            //             actionname = basename + '-done.actions.ts';
+            //             effectname = basename + '-done.effects.ts';
+            //             log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '      ' + chalk.yellow(actionPath + actionname) + '');
+            //             log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '      ' + chalk.yellow(actionPath + effectname) + '');
+            //
+            //             actionname = basename + '-error.actions.ts';
+            //             effectname = basename + '-error.effects.ts';
+            //             log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '      ' + chalk.yellow(actionPath + actionname) + '');
+            //             log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '      ' + chalk.yellow(actionPath + effectname) + '');
+            //         }
+            //     }
+            // }
         }
 
 
