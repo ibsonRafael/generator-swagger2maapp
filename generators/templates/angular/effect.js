@@ -44,16 +44,39 @@ export class <%= tag %>Effects {
             if (tag == paths[path][method].tags[0]) {
     %>
     /**
-     * @type {Observable<{type: ????ActionTypes; error: any} | any>}
+     * @type {Observable<{type: ActionTypes.<%=paths[path][method].operationId.replace(/\.?([A-Z]+)/g, function (x, y) {return "_" + y.toLowerCase()}).toUpperCase() %>; payload: any} | any>}
      */
     @Effect()
-    $<%=paths[path][method].operationId.charAt(0).toLowerCase() + paths[path][method].operationId.slice(1) %> = this.actions$.ofType(action.ActionTypes.<%=paths[path][method].operationId.replace(/\.?([A-Z]+)/g, function (x, y) {return "_" + y.toLowerCase()}).toUpperCase() %>)
+    $<%=paths[path][method].operationId.charAt(0).toLowerCase() + paths[path][method].operationId.slice(1) %> = this.actions$.ofType(actions.ActionTypes.<%=paths[path][method].operationId.replace(/\.?([A-Z]+)/g, function (x, y) {return "_" + y.toLowerCase()}).toUpperCase() %>)
         .map((action: actions.<%=paths[path][method].operationId.charAt(0).toUpperCase() + paths[path][method].operationId.slice(1) %>Action) => action.payload)
         .switchMap(state => {
-            // Do something here...
+            // Do something here if needed...
             return this.<%=tag.charAt(0).toLowerCase() + tag.slice(1) %>ApiClient.<%=paths[path][method].operationId.charAt(0).toLowerCase() + paths[path][method].operationId.slice(1) %>(state)
-                .map( user => new actions.<%=paths[path][method].operationId.charAt(0).toUpperCase() + paths[path][method].operationId.slice(1) %>SuccessAction( new User(user) ) )
-                .catch( error => of( new actions.<%=paths[path][method].operationId.charAt(0).toUpperCase() + paths[path][method].operationId.slice(1) %>FailAction() ) );
+                .map( response => {
+<%
+if (
+    typeof(paths[path][method]['responses']['200']) != 'undefined'
+    && typeof(paths[path][method]['responses']['200']['schema']) != 'undefined'
+    && typeof(paths[path][method]['responses']['200']['schema']['type']) != 'undefined'
+) {
+-%>
+<%if(paths[path][method]['responses']['200']['schema']['type'] == 'array') {-%>
+                    // Se o tipo de retorno for array...
+                    //const payload: Array<TYPE> = new User(response);
+                    const payload: Array<TYPE> = [];
+                    for(let item in response) {
+                        payload.push(new User(item));
+                    }
+<%}else if(paths[path][method]['responses']['200']['schema']['type'] == '?') {-%>
+                    // Se o tipo de retorno for ?...
+<%}else{-%>
+                    // Se o tipo de retorno for objeto...
+                    const payload = new User(response);
+<%}-%>
+<%}-%>
+                    return new actions.<%=paths[path][method].operationId.charAt(0).toUpperCase() + paths[path][method].operationId.slice(1) %>SuccessAction(payload);
+                } )
+                .catch( error => of( new actions.<%=paths[path][method].operationId.charAt(0).toUpperCase() + paths[path][method].operationId.slice(1) %>FailAction(error) ) );
         });
     <%
             }

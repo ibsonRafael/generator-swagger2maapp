@@ -36,7 +36,7 @@ export class <%=paths[path][method].operationId.charAt(0).toUpperCase() + paths[
      * @constructor
      * @param payload {type}
      */
-    constructor(payload: any) { }
+    constructor(public payload: any = null) { }
 }
 
 /**
@@ -50,7 +50,7 @@ export class <%=paths[path][method].operationId.charAt(0).toUpperCase() + paths[
      * @constructor
      * @param payload {type}
      */
-    constructor(payload: any) { }
+    constructor(public payload: any = null) { }
 }
 
 
@@ -65,7 +65,7 @@ export class <%=paths[path][method].operationId.charAt(0).toUpperCase() + paths[
      * @constructor
      * @param payload {type}
      */
-    constructor(payload: any) { }
+    constructor(public payload: any = null) { }
 }
 <%
         }
