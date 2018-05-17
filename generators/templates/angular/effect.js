@@ -63,6 +63,7 @@ if (
 <%if(paths[path][method]['responses']['200']['schema']['type'] == 'array') {-%>
                     // Se o tipo de retorno for array...
                     //const payload: Array<TYPE> = new User(response);
+                    <%=paths[path][method]['responses']['200']['schema']['items']['$ref'] %>
                     const payload: Array<TYPE> = [];
                     for(let item in response) {
                         payload.push(new User(item));
