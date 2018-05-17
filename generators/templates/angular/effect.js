@@ -61,19 +61,17 @@ if (
 ) {
 -%>
 <%if(paths[path][method]['responses']['200']['schema']['type'] == 'array') {-%>
-                    // Se o tipo de retorno for array...
-                    //const payload: Array<TYPE> = new User(response);
-                    <%=paths[path][method]['responses']['200']['schema']['items']['$ref'] %>
-                    const payload: Array<TYPE> = [];
-                    for(let item in response) {
+                    const payload: Array<<%=paths[path][method]['responses']['200']['schema']['items'].baseName%>> = [];
+                    for (let item in response) {
                         payload.push(new User(item));
                     }
 <%}else if(paths[path][method]['responses']['200']['schema']['type'] == '?') {-%>
                     // Se o tipo de retorno for ?...
 <%}else{-%>
-                    // Se o tipo de retorno for objeto...
-                    const payload = new User(response);
+                    const payload = new <%=paths[path][method]['responses']['200']['schema']['items'].baseName%>(response);
 <%}-%>
+<%} else {-%>
+                    const payload = {};
 <%}-%>
                     return new actions.<%=paths[path][method].operationId.charAt(0).toUpperCase() + paths[path][method].operationId.slice(1) %>SuccessAction(payload);
                 } )
