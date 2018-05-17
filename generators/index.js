@@ -435,6 +435,22 @@ module.exports = Generator.extend({
                 }
             );
 
+            var reducerPath = angularPath + angularMensager + 'reducers/';
+            var actionEffectsFileName = (actionTypeEnumName.replace(/\.?([A-Z]+)/g, function (x,y){return "-" + y.toLowerCase()}).replace(/^-/, "")) + '.reducer.ts';
+            generator.fs.copyTpl(
+                generator.templatePath('angular/reducer.js'),
+                generator.destinationPath(reducerPath + actionEffectsFileName),
+                {
+                    author: generator.api.info.contact.name,
+                    email: generator.api.info.contact.email,
+                    tag: generator._tags[tag],
+                    paths: generator.api.paths,
+
+                    action_filename: actionTypeEnumFileName,
+                    definitions: generator.api.definitions,
+                }
+            );
+
             // for (var path in generator.api.paths) {
             //     for (var method in generator.api.paths[path]) {
             //         if (generator._tags[tag] == generator.api.paths[path][method].tags[0]) {
