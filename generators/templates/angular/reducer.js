@@ -2,36 +2,80 @@
  * @class <%= tag %>Effects
  *
  * @author <%=author %> <<%=email %>>
- * @copyright MedTime - 2017 copyright
+ * @copyright ???? - 2017 copyright
  */
-import * as actions from '../actions/auth.action';
-import { User }     from '../../models';
+import * as actions         from '../actions/<%=action_filename.replace('.ts', '') %>';
+<% for (definition in definitions) { -%>
+import { <%=definitions[definition]['baseName']%> }<%=('                 ').slice(definitions[definition]['baseName'].length)%>from '../../entities/models';
+<% } -%>
 
+/**
+ * @interface
+ */
 export interface State {
     loading: boolean;
     loaded:  boolean;
     failed:  boolean;
-    user:    User;
+    data:    any;
 };
 
-const INITIAL_STATE: State = {
-    loading:       false,
-    loaded:        false,
-    failed:        false,
-    user:          new User()
+const <%=tag.toUpperCase()%>_INITIAL_STATE: State = {
+    loading: false,
+    loaded:  false,
+    failed:  false,
+    data:    null
 };
 
-export function reducer(state = INITIAL_STATE, action: actions.Actions): State
+/**
+ * @function reducer
+ * @param state
+ */
+export function reducer(state = <%=tag.toUpperCase()%>_INITIAL_STATE, action: actions.Actions): State
 {
     if (!action) return state;
     switch (action.type) {
+<%
+for (path in paths) {
+    for(method in paths[path]) {
+        if (tag == paths[path][method].tags[0]) {
+-%>
+        case actions.ActionTypes.<%=paths[path][method].operationId.replace(/\.?([A-Z]+)/g, function (x, y) {return "_" + y.toLowerCase()}).toUpperCase() %>: {
+            return Object.assign({}, state, {
+                loading: true,
+                loaded:  false,
+                failed:  false
+            });
+        }
+
+        case actions.ActionTypes.<%=paths[path][method].operationId.replace(/\.?([A-Z]+)/g, function (x, y) {return "_" + y.toLowerCase()}).toUpperCase() %>_SUCCESS: {
+            return Object.assign({}, state, {
+                loading: false,
+                loaded:  true,
+                failed:  false<%
+                    if (
+                        typeof(paths[path][method]['responses']['200']) != 'undefined'
+                        && typeof(paths[path][method]['responses']['200']['schema']) != 'undefined'
+                    ) { -%>,
+                data:    action.payload
+            <% } %>});
+        }
+
+        case actions.ActionTypes.<%=paths[path][method].operationId.replace(/\.?([A-Z]+)/g, function (x, y) {return "_" + y.toLowerCase()}).toUpperCase() %>_FAIL: {
+            return Object.assign({}, <%=tag.toUpperCase()%>_INITIAL_STATE, { failed:  true });
+        }
+
+<%
+        }
+    }
+}
+-%>
         default: {
             return state;
         }
     }
 }
 
-export const getLoggedUser = (state: State) => state.user;
-export const isLoading     = (state: State) => state.loading;
-export const isLoaded      = (state: State) => state.loaded;
-export const isFailed      = (state: State) => state.failed;
+export const getData    = (state: State) => state.data;
+export const isLoading  = (state: State) => state.loading;
+export const isLoaded   = (state: State) => state.loaded;
+export const isFailed   = (state: State) => state.failed;

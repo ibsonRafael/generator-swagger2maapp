@@ -1,6 +1,6 @@
 /**
  * @author <%=author %> <<%=email %>>
- * @copyright MedTime - 2017 copyright
+ * @copyright ???? - 2017 copyright
  */
 import { Action } from '@ngrx/store';
 

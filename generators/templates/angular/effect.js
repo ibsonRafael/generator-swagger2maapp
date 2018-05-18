@@ -2,7 +2,7 @@
  * @class <%= tag %>Effects
  *
  * @author <%=author %> <<%=email %>>
- * @copyright MedTime - 2017 copyright
+ * @copyright ???? - 2017 copyright
  */
 import { Injectable }       from '@angular/core';
 import { Effect, Actions }  from '@ngrx/effects';
@@ -68,7 +68,7 @@ if (
 <%}else if(paths[path][method]['responses']['200']['schema']['type'] == '?') {-%>
                     // Se o tipo de retorno for ?...
 <%}else{-%>
-                    const payload = new <%=paths[path][method]['responses']['200']['schema']['items'].baseName%>(response);
+                    const payload = new <%=paths[path][method]['responses']['200']['schema'].baseName%>(response);
 <%}-%>
 <%} else {-%>
                     const payload = {};
