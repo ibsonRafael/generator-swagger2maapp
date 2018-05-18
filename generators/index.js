@@ -111,7 +111,7 @@ module.exports = Generator.extend({
                                 break;
 
                             case 'array':
-                                attributeType = 'Array<any>';
+                                attributeType = 'Array<' + api.definitions[definition].properties[attributes]['items']['baseName'] + '>';
                                 break;
 
                             default:
@@ -125,7 +125,8 @@ module.exports = Generator.extend({
                             required_items.push(
                                 {
                                     nameCamelCase: attributes.charAt(0).toLowerCase() + attributes.slice(1),
-                                    type: attributeType
+                                    type: attributeType,
+                                    originalTye: api.definitions[definition].properties[attributes].type
                                 }
                             );
                         }
@@ -137,18 +138,19 @@ module.exports = Generator.extend({
                             namePascalCase: attributes,
 
                             required: false,
-                            readOnly: true, // Returned by GET, not used in POST/PUT/PATCH
-                            writeOnly: true, // Used in POST/PUT/PATCH, not returned by GET
+                            readOnly: true,   // Returned by GET, not used in POST/PUT/PATCH
+                            writeOnly: true,  // Used in POST/PUT/PATCH, not returned by GET
                             type: attributeType,
+                            originalTye: api.definitions[definition].properties[attributes].type,
                             nullable: true,
-                            minLength: 5, maxLength: 25, // To string
+                            minLength: 5, maxLength: 25,    // To string
                             pattern: '^\d{3}-\d{2}-\d{4}$', // To strings
-                            format: 'hostname', // To string
+                            format: 'hostname',             // To string
 
-                            minimum: 1, maximum: 10, // To numeric
+                            minimum: 1, maximum: 10,        // To numeric
 
-                            minItems: 1, maxItems: 10, //To arrays
-                            uniqueItems: true //To arrays, eg.:  Case:[1, 2, 3] – valid,  case:[1, 1, 3] – not valid.
+                            minItems: 1, maxItems: 10,      //To arrays
+                            uniqueItems: true               //To arrays, eg.:  Case:[1, 2, 3] – valid,  case:[1, 1, 3] – not valid.
                         });
                     }
                     api.definitions[definition]['required_items'] = required_items;

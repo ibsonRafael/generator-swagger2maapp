@@ -60,17 +60,17 @@ if (
     && typeof(paths[path][method]['responses']['200']['schema']['type']) != 'undefined'
 ) {
 -%>
-<%if(paths[path][method]['responses']['200']['schema']['type'] == 'array') {-%>
+<% if(paths[path][method]['responses']['200']['schema']['type'] == 'array') {-%>
                     const payload: Array<<%=paths[path][method]['responses']['200']['schema']['items'].baseName%>> = [];
                     for (let item in response) {
                         payload.push(new User(item));
                     }
-<%}else if(paths[path][method]['responses']['200']['schema']['type'] == '?') {-%>
+<% }else if(paths[path][method]['responses']['200']['schema']['type'] == '?') {-%>
                     // Se o tipo de retorno for ?...
-<%}else{-%>
+<% }else{-%>
                     const payload = new <%=paths[path][method]['responses']['200']['schema'].baseName%>(response);
-<%}-%>
-<%} else {-%>
+<% }-%>
+<% } else {-%>
                     const payload = {};
 <%}-%>
                     return new actions.<%=paths[path][method].operationId.charAt(0).toUpperCase() + paths[path][method].operationId.slice(1) %>SuccessAction(payload);
