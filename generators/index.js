@@ -212,21 +212,27 @@ module.exports = Generator.extend({
         }
 
         try {
-            fs.mkdirSync(basePath + 'front-end/');
+            //fs.mkdirSync(basePath + 'front-end/');
+            generator.fs.copy(
+                generator.templatePath('angular/base'),
+                generator.destinationPath(basePath + 'front-end/')
+            );
             log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(basePath + 'front-end/') + ') created');
         } catch (err) {
             log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(basePath + 'front-end/') + ') already exists');
             log(err);
         }
+
+
         try {
-            fs.mkdirSync(basePath + 'front-end/src/');
-            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(basePath + 'front-end/src/') + ') created');
+            fs.mkdirSync(basePath + 'front-end/src/app/');
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(basePath + 'front-end/src/app/') + ') created');
         } catch (err) {
-            log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(basePath + 'front-end/src/') + ') already exists');
+            log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(basePath + 'front-end/src/app/') + ') already exists');
             log(err);
         }
 
-        var angularPath = basePath + 'front-end/src/' + angularModule + '/';
+        var angularPath = basePath + 'front-end/src/app/' + angularModule + '/';
         try {
             fs.mkdirSync(angularPath);
             log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath) + ') created');
