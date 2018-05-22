@@ -222,7 +222,7 @@ module.exports = Generator.extend({
             log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(basePath + 'front-end/') + ') created');
         } catch (err) {
             log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(basePath + 'front-end/') + ') already exists');
-            log(err);
+
         }
 
 
@@ -231,16 +231,17 @@ module.exports = Generator.extend({
             log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(basePath + 'front-end/src/app/') + ') created');
         } catch (err) {
             log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(basePath + 'front-end/src/app/') + ') already exists');
-            log(err);
+
         }
 
-        var angularPath = basePath + 'front-end/src/app/' + angularModule + '/';
+        var angularModuleFolder = (angularModule.replace(/\.?([A-Z]+)/g, function (x,y){return "-" + y.toLowerCase()}).replace(/^-/, ""));
+        var angularPath = basePath + 'front-end/src/app/' + angularModuleFolder + '/';
         try {
             fs.mkdirSync(angularPath);
             log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath) + ') created');
         } catch (err) {
             log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath) + ') already exists');
-            log(err);
+
         }
 
         try {
@@ -248,7 +249,7 @@ module.exports = Generator.extend({
             log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'entities/') + ') created');
         } catch (err) {
             log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'entities/') + ') already exists');
-            log(err);
+
         }
 
 
@@ -259,7 +260,7 @@ module.exports = Generator.extend({
             log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + angularInterface) + ') created');
         } catch (err) {
             log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + angularInterface) + ') already exists');
-            log(err);
+
         }
 
         try {
@@ -267,7 +268,7 @@ module.exports = Generator.extend({
             log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + angularModels) + ') created');
         } catch (err) {
             log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + angularModels) + ') already exists');
-            log(err);
+
         }
 
 
@@ -277,8 +278,40 @@ module.exports = Generator.extend({
             log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'components/') + ') created');
         } catch (err) {
             log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'components/') + ') already exists');
-            log(err);
+
         }
+
+        var angularModuleServices = angularPath + 'services/';
+        try {
+            fs.mkdirSync(angularModuleServices);
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularModuleServices) + ') ' + chalk.green('created'));
+        } catch (err) {
+            log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularModuleServices) + ') ' + chalk.red('already exists'));
+        }
+
+            var angularHttpServices = angularModuleServices + 'http/';
+            try {
+                fs.mkdirSync(angularHttpServices);
+                log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularHttpServices) + ') ' + chalk.green('created'));
+            } catch (err) {
+                log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularHttpServices) + ') ' + chalk.red('already exists'));
+            }
+
+            var angularPropertiesServices = angularModuleServices + 'properties/';
+            try {
+                fs.mkdirSync(angularPropertiesServices);
+                log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPropertiesServices) + ') ' + chalk.green('created'));
+            } catch (err) {
+                log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPropertiesServices) + ') ' + chalk.red('already exists'));
+            }
+
+            var angularStorageServices = angularModuleServices + 'storage/';
+            try {
+                fs.mkdirSync(angularStorageServices);
+                log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularStorageServices) + ') ' + chalk.green('created'));
+            } catch (err) {
+                log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularStorageServices) + ') ' + chalk.red('already exists'));
+            }
 
 
         var angularMensager  = 'store/';
@@ -287,30 +320,33 @@ module.exports = Generator.extend({
             log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'menssager/') + ') created');
         } catch (err) {
             log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'menssager/') + ') already exists');
-            log(err);
+
         }
 
-        try {
-            fs.mkdirSync(angularPath + 'store/actions/');
-            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'store/actions/') + ') created');
-        } catch (err) {
-            log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'store/actions/') + ') already exists');
-            log(err);
-        }
-        try {
-            fs.mkdirSync(angularPath + 'store/effects/');
-            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'store/effects/') + ') created');
-        } catch (err) {
-            log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'store/effects/') + ') already exists');
-            log(err);
-        }
-        try {
-            fs.mkdirSync(angularPath + 'store/reducers/');
-            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'store/reducers/') + ') created');
-        } catch (err) {
-            log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'store/reducers/') + ') already exists');
-            log(err);
-        }
+            try {
+                fs.mkdirSync(angularPath + 'store/actions/');
+                log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'store/actions/') + ') created');
+            } catch (err) {
+                log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'store/actions/') + ') already exists');
+
+            }
+            try {
+                fs.mkdirSync(angularPath + 'store/effects/');
+                log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'store/effects/') + ') created');
+            } catch (err) {
+                log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'store/effects/') + ') already exists');
+
+            }
+            try {
+                fs.mkdirSync(angularPath + 'store/reducers/');
+                log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'store/reducers/') + ') created');
+            } catch (err) {
+                log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'store/reducers/') + ') already exists');
+
+            }
+
+
+
 
         // Generating models
         for (var definition in generator.api.definitions) {
