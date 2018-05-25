@@ -3,6 +3,8 @@
  * @copyright ???? - 2017 copyright
  */
 import { Action } from '@ngrx/store';
+import {type} from '../../../../../../shared/utility/utilityHelpers';
+import {environment} from '../../../../../../../environments/environment';
 
 export const ActionTypes = {
     <%

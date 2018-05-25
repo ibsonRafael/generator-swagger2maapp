@@ -15,6 +15,10 @@ import { <%=definitions[definition]['baseName']%> }<%=('                 ').slic
 export interface State {
     loading: boolean;
     loaded:  boolean;
+    created: boolean;
+    updated: boolean;
+    deleted: boolean;
+    patched: boolean;
     failed:  boolean;
     data:    any;
 };
@@ -22,6 +26,10 @@ export interface State {
 const <%=tag.toUpperCase()%>_INITIAL_STATE: State = {
     loading: false,
     loaded:  false,
+    created: false,
+    updated: false,
+    deleted: false,
+    patched: false,
     failed:  false,
     data:    null
 };
@@ -43,6 +51,10 @@ for (path in paths) {
             return Object.assign({}, state, {
                 loading: true,
                 loaded:  false,
+                created: false,
+                updated: false,
+                deleted: false,
+                patched: false,
                 failed:  false
             });
         }
@@ -51,6 +63,34 @@ for (path in paths) {
             return Object.assign({}, state, {
                 loading: false,
                 loaded:  true,
+                <%
+                if (method.toLowerCase() == 'post') { -%>
+                created: true,
+                updated: false,
+                deleted: false,
+                patched: false,<%
+                } else if(method.toLowerCase() == 'patch') {-%>
+                created: false,
+                updated: false,
+                deleted: false,
+                patched: true,<%
+                } else if(method.toLowerCase() == 'put') {-%>
+                created: false,
+                updated: true,
+                deleted: false,
+                patched: false,<%
+                } else if(method.toLowerCase() == 'get') {-%>
+                created: false,
+                updated: false,
+                deleted: false,
+                patched: false,<%
+                } else if(method.toLowerCase() == 'delete') {-%>
+                created: false,
+                updated: false,
+                deleted: true,
+                patched: false,<%
+                }
+                %>
                 failed:  false<%
                     if (
                         typeof(paths[path][method]['responses']['200']) != 'undefined'

@@ -495,6 +495,59 @@ module.exports = Generator.extend({
                 }
             );
 
+
+            /**
+             * @TODO
+             */
+            var storePath = angularPath + angularMensager;
+            var storeFileName = 'index.ts';
+            generator.fs.copyTpl(
+                generator.templatePath('angular/index.store.js'),
+                generator.destinationPath(storePath + storeFileName),
+                {
+                    author: generator.api.info.contact.name,
+                    email: generator.api.info.contact.email,
+                    tag: generator._tags[tag],
+                    paths: generator.api.paths,
+
+                    action_filename: actionTypeEnumFileName,
+                    definitions: generator.api.definitions,
+                }
+            );
+
+
+
+            var sandboxPath = angularPath;
+            var sandboxServiceFileName = (actionTypeEnumName.replace(/\.?([A-Z]+)/g, function (x,y){return "-" + y.toLowerCase()}).replace(/^-/, "")) + '-sandbox.sevice.ts';
+            var sandboxServiceSpecFileName = (actionTypeEnumName.replace(/\.?([A-Z]+)/g, function (x,y){return "-" + y.toLowerCase()}).replace(/^-/, "")) + '-sandbox.sevice.spec.ts';
+            generator.fs.copyTpl(
+                generator.templatePath('angular/sandbox.js'),
+                generator.destinationPath(sandboxPath + sandboxServiceFileName),
+                {
+                    author: generator.api.info.contact.name,
+                    email: generator.api.info.contact.email,
+                    tag: generator._tags[tag],
+                    paths: generator.api.paths,
+
+                    action_filename: actionTypeEnumFileName,
+                    definitions: generator.api.definitions,
+                }
+            );
+
+            generator.fs.copyTpl(
+                generator.templatePath('angular/sandbox.spec.js'),
+                generator.destinationPath(sandboxPath + sandboxServiceSpecFileName),
+                {
+                    author: generator.api.info.contact.name,
+                    email: generator.api.info.contact.email,
+                    tag: generator._tags[tag],
+                    paths: generator.api.paths,
+
+                    action_filename: actionTypeEnumFileName,
+                    definitions: generator.api.definitions,
+                }
+            );
+
             // for (var path in generator.api.paths) {
             //     for (var method in generator.api.paths[path]) {
             //         if (generator._tags[tag] == generator.api.paths[path][method].tags[0]) {
