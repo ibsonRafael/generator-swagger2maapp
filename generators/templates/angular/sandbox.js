@@ -66,6 +66,10 @@ for (path in paths) {
 }
 -%>
 
+    /** * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+     * @TODO Tratar os get, post, deletes, updates and patches... Ver nos reducers
+     * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
     /**
      * Inicializa o sandbox do módulo, define valores padrão de atributos e executa rotinas internas
      * @constructor

@@ -1,6 +1,6 @@
 /**
- * @interface <%=classname%>
- * @extends I<%=classname %>
+ * @class <%=classname%>
+ * @implements I<%=classname %>
  * @author <%=author%> <<%=email%>>
  * @copyright ? - 2017 copyright
  */

@@ -63,7 +63,7 @@ for (path in paths) {
             return Object.assign({}, state, {
                 loading: false,
                 loaded:  true,
-                <%
+<%
                 if (method.toLowerCase() == 'post') { -%>
                 created: true,
                 updated: false,
@@ -118,4 +118,8 @@ for (path in paths) {
 export const getData    = (state: State) => state.data;
 export const isLoading  = (state: State) => state.loading;
 export const isLoaded   = (state: State) => state.loaded;
+export const isCreated  = (state: State) => state.created;
+export const isUpdated  = (state: State) => state.updated;
+export const isDeleted  = (state: State) => state.deleted;
+export const isPatched  = (state: State) => state.patched;
 export const isFailed   = (state: State) => state.failed;
