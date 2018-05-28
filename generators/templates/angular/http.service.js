@@ -7,13 +7,12 @@
 import { Injectable }  from '@angular/core';
 import { Observable }  from "rxjs/Observable";
 import { environment}  from '../../../../environments/environment';
-import { HttpClient, HttpResponse }  from 'angular/common/http';
+import { HttpClient, HttpResponse, HttpHeaders }  from '@angular/common/http';
 // -------------------------------------- //
-import { HttpAdapter } from './../../../shared/services/http/http.adapter';
+import { HttpAdapter }         from './../../../shared/services/http/http.adapter';
 import { HttpResponseHandler } from './../../../shared/services/http/http-response-handler.service';
-import { * } from './../../../shared/services/http/http-options-global';
+import { httpOptionsGlobal }   from './../../../shared/services/http/http-options-global';
 // -------------------------------------- //
-
 @Injectable()
 export class <%= tag %>ApiClientService {
 
@@ -22,8 +21,8 @@ export class <%= tag %>ApiClientService {
      * serviço se houver algum
      * @type {{headers: HttpHeaders}}
      */
-    const httpOptions = {
-        headers: new HttpHeaders(Object.asign(
+    private httpOptions = {
+        headers: new HttpHeaders(Object.assign(
             {},
             httpOptionsGlobal,
             {
@@ -58,9 +57,17 @@ export class <%= tag %>ApiClientService {
 <% } -%>
 <% if(
      typeof(paths[path][method]['parameters']) != 'undefined' && paths[path][method]['parameters'].length > 0
-     ) { -%><% for (param in paths[path][method]['parameters']) { -%>
-     * @param <%=paths[path][method]['parameters'][param].name %> {<%=paths[path][method]['parameters'][param].type + ' | '  %><%=paths[path][method]['parameters'][param].baseName + ' | ' %>any} [DENTRO DO OBJETO DATA] <%=paths[path][method]['parameters'][param].description %>
-<% } -%><% } -%>
+     ) { -%>
+     * @param data { object | any} Contém o payload para o serviço, pondendo conter parâmetros de url, querystring, form ou body ou um mix destes
+     *
+     * @example
+     *  data = {
+<% for (param in paths[path][method]['parameters']) { -%>
+     *      <%=paths[path][method]['parameters'][param].name %> {<%=paths[path][method]['parameters'][param].type + ' | '  %><%=paths[path][method]['parameters'][param].baseName + ' | ' %>any} [DENTRO DO OBJETO DATA] <%=paths[path][method]['parameters'][param].description %>
+<% } -%>
+     *  }
+     *
+<% } -%>
      * @returns {Observable<any>}
      * @TODO Tipar os retornos e também o type do metódo de requisição...
      */
@@ -75,7 +82,7 @@ export class <%= tag %>ApiClientService {
         }
         -%>data: any<% } -%>): Observable<HttpResponse<any>> {
         if (!environment.production) {
-            console.log('<%= tag %>ApiClientService::<%=paths[path][method].operationId.charAt(0).toLowerCase() + paths[path][method].operationId.slice(1) %>', data);
+            console.log('<%= tag %>ApiClientService::<%=paths[path][method].operationId.charAt(0).toLowerCase() + paths[path][method].operationId.slice(1) %>'<%=_parametros%>);
         }
         <%
             var _tipo_retorno = 'any';
@@ -113,7 +120,7 @@ export class <%= tag %>ApiClientService {
         %>
         let endpoint: string = `${environment.BASE_URL}<%=_url%>`;
         <% } %>
-        let observable: Observable<any> = this.http.<%=method%><<%=_tipo_retorno%>>(endpoint<%=_parametros %>, this.httpOptions);
+        let observable: Observable<any> = this.http.<%=method%><<%=_tipo_retorno%>>(endpoint<%=_parametros%>, this.httpOptions);
         observable = this.responseInterceptor(observable);
         return observable;
     }
@@ -128,6 +135,7 @@ export class <%= tag %>ApiClientService {
      *
      * @method responseInterceptor
      * @param {Response} observableRes - response object
+     * @param {Function} adapterFn
      * @returns {Response} res - transformed response object
      */
     protected responseInterceptor(observableRes: Observable<any>, adapterFn?: Function): Observable<any> {
