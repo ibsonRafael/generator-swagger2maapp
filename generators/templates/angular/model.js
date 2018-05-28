@@ -38,8 +38,4 @@ export class <%=classname %> implements I<%=classname %> {
     public getHashCode(): string {
         return '';
     }
-
-    public compareTo(item: any): boolean {
-        return false;
-    }
 }

@@ -353,6 +353,7 @@ module.exports = Generator.extend({
             var interfaceFileName = generator.api.definitions[definition]['modelName'].replace('.model.', '.interface.');
             var interfacePath = angularPath + angularInterface + interfaceFileName;
             var modelPath     = angularPath + angularModels + generator.api.definitions[definition]['modelName'];
+            var modelTestPath = angularPath + angularModels + generator.api.definitions[definition]['modelName'].replace('.model.', '.spec.');
 
             log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Creating interface: ' + chalk.yellow(interfacePath) + '');
             generator.fs.copyTpl(
@@ -372,6 +373,23 @@ module.exports = Generator.extend({
                 generator.templatePath('angular/model.js'),
                 generator.destinationPath(modelPath),
                 {
+                    interfacename: 'I' + generator.api.definitions[definition]['baseName'],
+                    classname: generator.api.definitions[definition]['baseName'],
+                    author: generator.api.info.contact.name,
+                    email: generator.api.info.contact.email,
+                    attributes: generator.api.definitions[definition]['attributes'],
+                    required_items: generator.api.definitions[definition]['required_items'],
+                    interface_filename: interfaceFileName.replace('.ts', ''),
+                    api: generator.api
+                }
+            );
+
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Creating model tests:     ' + chalk.yellow(modelTestPath) + '');
+            generator.fs.copyTpl(
+                generator.templatePath('angular/model.spec.js'),
+                generator.destinationPath(modelTestPath),
+                {
+                    modelfile_name: generator.api.definitions[definition]['modelName'].replace('.ts', ''),
                     interfacename: 'I' + generator.api.definitions[definition]['baseName'],
                     classname: generator.api.definitions[definition]['baseName'],
                     author: generator.api.info.contact.name,
