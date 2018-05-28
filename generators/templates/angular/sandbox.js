@@ -136,3 +136,4 @@ for (path in paths) {
          *);
          */
     }
+}

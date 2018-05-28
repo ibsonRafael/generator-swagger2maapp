@@ -4,6 +4,32 @@
  * @author <%=author %> <<%=email %>>
  * @copyright ???? - 2017 copyright
  */
+<%
+var nomeFirstLower = tag;
+nomeFirstLower = nomeFirstLower.charAt(0).toLowerCase() + nomeFirstLower.slice(1);
+nomeFirstUpper = nomeFirstLower.charAt(0).toUpperCase() + nomeFirstLower.slice(1);
+
+var array_tags = [];
+var array_tags_lower = [];
+var array_tags_upper = [];
+var array_tags_snake = [];
+for (path in paths) {
+    for (method in paths[path]) {
+        if (array_tags.indexOf(paths[path][method].tags[0]) == -1) {
+            array_tags.push(paths[path][method].tags[0]);
+            var current_tag = paths[path][method].tags[0];
+            current_tag = current_tag.charAt(0).toLowerCase() + current_tag.slice(1);
+            array_tags_lower.push(current_tag);
+
+            var current_tag_upper = current_tag.charAt(0).toUpperCase() + current_tag.slice(1);
+            array_tags_upper.push(current_tag_upper);
+
+            var current_tag_snake = current_tag.replace(/\.?([A-Z]+)/g, function (x,y){return "-" + y.toLowerCase()}).replace(/^-/, "");
+            array_tags_snake.push(current_tag_snake.toLowerCase());
+        }
+    }
+}
+-%>
 import { createSelector } from 'reselect';
 
 // Mais informações em:  https://egghead.io/lessons/javascript-redux-implementing-combinereducers-from-scratch
@@ -11,10 +37,8 @@ import { ActionReducer, combineReducers } from '@ngrx/store';
 
 // Mais informações em: https://drboolean.gitbooks.io/mostly-adequate-guide/content/ch5.html
 import { compose } from '@ngrx/core/compose';
-
-
-
-import * as fromInstituicao from './reducers/instituicao.reducer';
+<% for (_tag in array_tags_lower) { %>
+import * as from<%=array_tags_upper[_tag]%> from './reducers/<%=array_tags_snake[_tag].toLowerCase() %>.reducer';<% } -%>
 
 
 /**
@@ -23,7 +47,8 @@ import * as fromInstituicao from './reducers/instituicao.reducer';
  * os tipos de estado interno.
  */
 export interface State {
-    instituicao: fromInstituicao.State;
+<% for (_tag in array_tags_lower) { %>
+    <%=array_tags_lower[_tag]%>: from<%=array_tags_upper[_tag]%>.State;<% } %>
 }
 
 
@@ -35,7 +60,8 @@ export interface State {
  * direita para a esquerda.
  */
 const reducers = {
-    instituicao: fromInstituicao.reducer
+<% for (_tag in array_tags_lower) { %>
+    <%=array_tags_lower[_tag]%>: from<%=array_tags_upper[_tag]%>.reducer, <% } %>
 };
 
 
@@ -51,24 +77,18 @@ export function store(state: any, action: any) {
  */
 
 
-
+<% for (_tag in array_tags_lower) { %>
 /**
- * Configurações das funções de Períodos
+ * Configurações das funções de <%=array_tags_upper[_tag]%>
  */
-export const getPeriodoState   = (state: State) => state.instituicao;
-export const getPeriodosData   = createSelector(getPeriodoState, fromInstituicao.getPeriodosData);
-export const isPeriodosLoading = createSelector(getPeriodoState, fromInstituicao.isPeriodosLoading);
-export const isPeriodosLoaded  = createSelector(getPeriodoState, fromInstituicao.isPeriodosLoaded);
-export const isPeriodosFailed  = createSelector(getPeriodoState, fromInstituicao.isPeriodosFailed);
+export const get<%=array_tags_upper[_tag]%>State  = (state: State) => state.<%=nomeFirstLower%>;
+export const get<%=array_tags_upper[_tag]%>Data   = createSelector(get<%=array_tags_upper[_tag]%>State, from<%=array_tags_upper[_tag]%>.getData);
+export const is<%=array_tags_upper[_tag]%>Loading = createSelector(get<%=array_tags_upper[_tag]%>State, from<%=array_tags_upper[_tag]%>.isLoading);
+export const is<%=array_tags_upper[_tag]%>Loaded  = createSelector(get<%=array_tags_upper[_tag]%>State, from<%=array_tags_upper[_tag]%>.isLoaded);
+export const is<%=array_tags_upper[_tag]%>Created = createSelector(get<%=array_tags_upper[_tag]%>State, from<%=array_tags_upper[_tag]%>.isCreated);
+export const is<%=array_tags_upper[_tag]%>Updated = createSelector(get<%=array_tags_upper[_tag]%>State, from<%=array_tags_upper[_tag]%>.isUpdated);
+export const is<%=array_tags_upper[_tag]%>Patched = createSelector(get<%=array_tags_upper[_tag]%>State, from<%=array_tags_upper[_tag]%>.isPatched);
+export const is<%=array_tags_upper[_tag]%>Deleted = createSelector(get<%=array_tags_upper[_tag]%>State, from<%=array_tags_upper[_tag]%>.isDeleted);
+export const is<%=array_tags_upper[_tag]%>Failed  = createSelector(get<%=array_tags_upper[_tag]%>State, from<%=array_tags_upper[_tag]%>.isFailed);
 
-export const getProfissoesState  = (state: State) => state.instituicao;
-export const getProfissoesData   = createSelector(getProfissoesState, fromInstituicao.getProfissoesData);
-export const isProfissoesLoading = createSelector(getProfissoesState, fromInstituicao.isProfissoesLoading);
-export const isProfissoesLoaded  = createSelector(getProfissoesState, fromInstituicao.isProfissoesLoaded);
-export const isProfissoesFailed  = createSelector(getProfissoesState, fromInstituicao.isProfissoesFailed);
-
-export const getCapacidadesState  = (state: State) => state.instituicao;
-export const getCapacidadesData   = createSelector(getCapacidadesState, fromInstituicao.getPeriodosData);
-export const isCapacidadesLoading = createSelector(getCapacidadesState, fromInstituicao.isCapacidadeLoading);
-export const isCapacidadesLoaded  = createSelector(getCapacidadesState, fromInstituicao.isCapacidadeLoaded);
-export const isCapacidadesFailed  = createSelector(getCapacidadesState, fromInstituicao.isCapacidadeFailed);
+<% } %>

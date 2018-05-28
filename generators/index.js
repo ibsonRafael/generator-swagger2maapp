@@ -548,6 +548,28 @@ module.exports = Generator.extend({
                 }
             );
 
+
+
+
+
+
+            var servicePath = angularPath + 'services/http/';
+            var serviceFileName = (actionTypeEnumName.replace(/\.?([A-Z]+)/g, function (x,y){return "-" + y.toLowerCase()}).replace(/^-/, "")) + '-api-client.service.ts';
+            generator.fs.copyTpl(
+                generator.templatePath('angular/http.service.js'),
+                generator.destinationPath(servicePath + serviceFileName),
+                {
+                    api:    generator.api,
+                    author: generator.api.info.contact.name,
+                    email:  generator.api.info.contact.email,
+                    tag:    generator._tags[tag],
+                    paths:  generator.api.paths,
+
+                    action_filename: actionTypeEnumFileName,
+                    definitions: generator.api.definitions,
+                }
+            );
+
             // for (var path in generator.api.paths) {
             //     for (var method in generator.api.paths[path]) {
             //         if (generator._tags[tag] == generator.api.paths[path][method].tags[0]) {

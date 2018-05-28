@@ -11,16 +11,14 @@ import { Observable }       from 'rxjs/Observable';
 import { of }               from 'rxjs/observable/of';
 import { Store }            from '@ngrx/store';
 
-import {????????ActionTypes} from '../do-not-know';
-
+import {environment} from '../../../../environments/environment';
 import * as actions         from '../actions/<%=action_filename.replace('.ts', '') %>';
 import * as store           from '../index';
 
 <% for (definition in definitions) { %>
 import { <%=definitions[definition]['baseName']%> }<%=('                 ').slice(definitions[definition]['baseName'].length)%>from '../../entities/models';<% } %>
 
-import { <%=tag%>ApiClient } from '../../../auth/authApiClient.service'; // ISSO_EH_O_SERVICE_OU_COMMAND_CLASS
-import * as business from '../do-not-know'; // Module created to this sub-context
+import { <%=tag%>ApiClient } from '../../services/http/<%=tag.toLowerCase()%>-api-client.service'; // ISSO_EH_O_SERVICE_OU_COMMAND_CLASS
 
 /**
  * Effects offer a way to isolate and easily test side-effects within your
@@ -51,7 +49,12 @@ export class <%= tag %>Effects {
         .map((action: actions.<%=paths[path][method].operationId.charAt(0).toUpperCase() + paths[path][method].operationId.slice(1) %>Action) => action.payload)
         .switchMap(state => {
             // Do something here if needed...
-            return this.<%=tag.charAt(0).toLowerCase() + tag.slice(1) %>ApiClient.<%=paths[path][method].operationId.charAt(0).toLowerCase() + paths[path][method].operationId.slice(1) %>(state)
+            return this.<%=tag.charAt(0).toLowerCase() + tag.slice(1) %>ApiClient.<%=paths[path][method].operationId.charAt(0).toLowerCase() + paths[path][method].operationId.slice(1) %>(<%
+                    if (
+                    typeof(paths[path][method]['parameters']) != 'undefined'
+                        && paths[path][method]['parameters'].length > 0
+                    ) {
+                    -%>state<% } -%>)
                 .map( response => {
 <%
 if (
@@ -61,10 +64,7 @@ if (
 ) {
 -%>
 <% if(paths[path][method]['responses']['200']['schema']['type'] == 'array') {-%>
-                    const payload: Array<<%=paths[path][method]['responses']['200']['schema']['items'].baseName%>> = [];
-                    for (let item in response) {
-                        payload.push(new User(item));
-                    }
+                    const payload: Array<<%=paths[path][method]['responses']['200']['schema']['items'].baseName%>> = response;
 <% }else if(paths[path][method]['responses']['200']['schema']['type'] == '?') {-%>
                     // Se o tipo de retorno for ?...
 <% }else{-%>
@@ -89,7 +89,7 @@ if (
      */
     constructor (
         private actions$: Actions,
-        private <%=tag.charAt(0).toLowerCase() + tag.slice(1) %>ApiClient: <%=tag%>ApiClient
+        private <%=tag.charAt(0).toLowerCase() + tag.slice(1) %>ApiClient: <%=tag%>ApiClientService
     ) {
         // Silence is golden...
     }
