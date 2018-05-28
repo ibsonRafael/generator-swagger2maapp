@@ -17,8 +17,7 @@ import * as store           from '../index';
 
 <% for (definition in definitions) { %>
 import { <%=definitions[definition]['baseName']%> }<%=('                 ').slice(definitions[definition]['baseName'].length)%>from '../../entities/models';<% } %>
-
-import { <%=tag%>ApiClient } from '../../services/http/<%=tag.toLowerCase()%>-api-client.service'; // ISSO_EH_O_SERVICE_OU_COMMAND_CLASS
+import { <%=tag%>ApiClientService } from '../../services/http/<%=tag.toLowerCase()%>-api-client.service';
 
 /**
  * Effects offer a way to isolate and easily test side-effects within your
