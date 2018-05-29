@@ -272,12 +272,12 @@ module.exports = Generator.extend({
         }
 
 
-        var angularComponents= 'components/';
+        var angularComponents= 'pages/';
         try {
-            fs.mkdirSync(angularPath + 'components/');
-            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'components/') + ') created');
+            fs.mkdirSync(angularPath + angularComponents);
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + angularComponents) + ') created');
         } catch (err) {
-            log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + 'components/') + ') already exists');
+            log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + angularComponents) + ') already exists');
 
         }
 
@@ -405,21 +405,43 @@ module.exports = Generator.extend({
         // Generating components
         for (var component in generator.api.components) {
             var componentName = (component.replace(/\.?([A-Z]+)/g, function (x,y){return "-" + y.toLowerCase()}).replace(/^-/, ""))
-            var componentPath = angularPath + angularComponents + componentName + '.component.ts'
-            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Creating Component: ' + chalk.yellow( componentPath ) );
-            // generator.fs.copyTpl(
-            //     generator.templatePath('angular/smart-component.js'),
-            //     generator.destinationPath(componentPath),
-            //     {
-            //       component: component,
-            //       author: generator.api.info.contact.name,
-            //       email: generator.api.info.contact.email,
-            //       api: generator.api
-            //     }
-            // );
+            var componentPath = angularPath + angularComponents + componentName + '-page.component.ts'
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Creating Page Component: ' + chalk.yellow( componentPath ) );
+            generator.fs.copyTpl(
+                generator.templatePath('angular/smart-component.js'),
+                generator.destinationPath(componentPath),
+                {
+                  componentName: componentName,
+                  component: component,
+                  author: generator.api.info.contact.name,
+                  email: generator.api.info.contact.email,
+                  api: generator.api
+                }
+            );
 
-            var listComponentPath = angularPath + angularComponents + componentName + '-list.component.ts';
-            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '     Creating Dumb Component: ' + chalk.yellow(listComponentPath));
+            try {
+                fs.mkdirSync(angularPath + angularComponents + componentName + '/');
+                log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + angularComponents) + ') created');
+            } catch (err) {
+                log(chalk.red('(EE) ') + chalk.red('[ Angular  ]') + '  Folder (' + chalk.yellow(angularPath + angularComponents) + ') already exists');
+
+            }
+
+            var listComponentPath = angularPath + angularComponents + componentName + '/' + componentName + '-filter-BYXXXX.component.ts';
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '     Creating Component: ' + chalk.yellow(listComponentPath));
+            generator.fs.copyTpl(
+                generator.templatePath('angular/list-component.js'),
+                generator.destinationPath(listComponentPath),
+                {
+                    component: component,
+                    author: generator.api.info.contact.name,
+                    email: generator.api.info.contact.email,
+                    api: generator.api
+                }
+            );
+
+            var listComponentPath = angularPath + angularComponents + componentName + '/' + componentName + '-list.component.ts';
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '     Creating Component: ' + chalk.yellow(listComponentPath));
             generator.fs.copyTpl(
                 generator.templatePath('angular/list-component.js'),
                 generator.destinationPath(listComponentPath),
@@ -431,8 +453,8 @@ module.exports = Generator.extend({
                 }
             );
 
-            var editComponentPath = angularPath + angularComponents + componentName + '-edit.component.ts';
-            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '     Creating Dumb Component: ' + chalk.yellow(editComponentPath));
+            var editComponentPath = angularPath + angularComponents + componentName + '/' + componentName + '-edit.component.ts';
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '     Creating Component: ' + chalk.yellow(editComponentPath));
             generator.fs.copyTpl(
                 generator.templatePath('angular/edit-component.js'),
                 generator.destinationPath(editComponentPath),
@@ -444,10 +466,10 @@ module.exports = Generator.extend({
                 }
             );
 
-            var viewComponentPath = angularPath + angularComponents + componentName + '-view.component.ts';
-            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '     Creating Dumb Component: ' + chalk.yellow(viewComponentPath));
+            var viewComponentPath = angularPath + angularComponents + componentName + '/' + componentName + '-detail.component.ts';
+            log(chalk.blue('(II) ') + chalk.red('[ Angular  ]') + '     Creating Component: ' + chalk.yellow(viewComponentPath));
             generator.fs.copyTpl(
-                generator.templatePath('angular/smart-component.js'),
+                generator.templatePath('angular/detail-component.js'),
                 generator.destinationPath(viewComponentPath),
                 {
                   component: component + 'ViewComponent',
@@ -457,6 +479,7 @@ module.exports = Generator.extend({
                 }
             );
         }
+
 
         // Creating actions
         for(var tag in generator._tags) {

@@ -13,6 +13,11 @@ import { <%=definitions[definition]['baseName']%> }<%=('                 ').slic
  * @interface
  */
 export interface State {
+    listaLoading: boolean;
+    listaLoaded:  boolean;
+    listaFailed:  boolean;
+    lista:        Array<any>;
+
     loading: boolean;
     loaded:  boolean;
     created: boolean;
@@ -24,6 +29,11 @@ export interface State {
 };
 
 const <%=tag.toUpperCase()%>_INITIAL_STATE: State = {
+    listaLoading: false,
+    listaLoaded:  false,
+    listaFailed:  false,
+    lista:        [],
+
     loading: false,
     loaded:  false,
     created: false,
@@ -38,7 +48,7 @@ const <%=tag.toUpperCase()%>_INITIAL_STATE: State = {
  * @function reducer
  * @param state
  */
-export function reducer(state = <%=tag.toUpperCase()%>_INITIAL_STATE, action: actions.Actions): State
+export function reducer(state = <%=tag.toUpperCase() %>_INITIAL_STATE, action: actions.Actions): State
 {
     if (!action) return state;
     switch (action.type) {
@@ -55,14 +65,24 @@ for (path in paths) {
                 updated: false,
                 deleted: false,
                 patched: false,
-                failed:  false
-            });
+                failed:  false<% if (
+                    typeof(paths[path][method]['responses']['200']) != 'undefined'
+                    && typeof(paths[path][method]['responses']['200']['schema']) != 'undefined'
+                    && typeof(paths[path][method]['responses']['200']['schema']['type']) != 'undefined'
+                    && paths[path][method]['responses']['200']['schema']['type'].toLowerCase() == 'array'
+                ) { -%>,
+                listaLoading: true,
+                listaLoaded:  false<% } else if (
+                    typeof(paths[path][method]['responses']['200']) != 'undefined'
+                    && typeof(paths[path][method]['responses']['200']['schema']) != 'undefined'
+                    ) { -%>,
+                loading: true,
+                loaded:  false
+            <% } %>});
         }
 
         case actions.ActionTypes.<%=paths[path][method].operationId.replace(/\.?([A-Z]+)/g, function (x, y) {return "_" + y.toLowerCase()}).toUpperCase() %>_SUCCESS: {
             return Object.assign({}, state, {
-                loading: false,
-                loaded:  true,
 <%
                 if (method.toLowerCase() == 'post') { -%>
                 created: true,
@@ -95,9 +115,19 @@ for (path in paths) {
                     if (
                         typeof(paths[path][method]['responses']['200']) != 'undefined'
                         && typeof(paths[path][method]['responses']['200']['schema']) != 'undefined'
+                        && typeof(paths[path][method]['responses']['200']['schema']['type']) != 'undefined'
+                        && paths[path][method]['responses']['200']['schema']['type'].toLowerCase() == 'array'
                     ) { -%>,
+                listaLoading: false,
+                listaLoaded:  true,
+                lista:    action.payload<% } else if (
+                        typeof(paths[path][method]['responses']['200']) != 'undefined'
+                        && typeof(paths[path][method]['responses']['200']['schema']) != 'undefined'
+                        ) { -%>,
+                loading: false,
+                loaded:  true,
                 data:    action.payload
-            <% } %>});
+                <% } %>});
         }
 
         case actions.ActionTypes.<%=paths[path][method].operationId.replace(/\.?([A-Z]+)/g, function (x, y) {return "_" + y.toLowerCase()}).toUpperCase() %>_FAIL: {
@@ -114,6 +144,11 @@ for (path in paths) {
         }
     }
 }
+// @TODO Soment se houver retorno de lista/array em algum dos endpoints desta tag...
+export const getListaData    = (state: State) => state.lista;
+export const isListaLoading  = (state: State) => state.listaLoading;
+export const isListaLoaded   = (state: State) => state.listaLoaded;
+export const isListaFailed   = (state: State) => state.listaFailed;
 
 export const getData    = (state: State) => state.data;
 export const isLoading  = (state: State) => state.loading;

@@ -82,6 +82,12 @@ export function store(state: any, action: any) {
  * Configurações das funções de <%=array_tags_upper[_tag]%>
  */
 export const get<%=array_tags_upper[_tag]%>State  = (state: State) => state.<%=nomeFirstLower%>;
+
+export const get<%=array_tags_upper[_tag]%>ListaData   = createSelector(get<%=array_tags_upper[_tag]%>State, from<%=array_tags_upper[_tag]%>.getListaData);
+export const is<%=array_tags_upper[_tag]%>ListaLoading = createSelector(get<%=array_tags_upper[_tag]%>State, from<%=array_tags_upper[_tag]%>.isListaLoading);
+export const is<%=array_tags_upper[_tag]%>ListaLoaded  = createSelector(get<%=array_tags_upper[_tag]%>State, from<%=array_tags_upper[_tag]%>.isListaLoaded);
+export const is<%=array_tags_upper[_tag]%>ListaFailed  = createSelector(get<%=array_tags_upper[_tag]%>State, from<%=array_tags_upper[_tag]%>.isListaFailed);
+
 export const get<%=array_tags_upper[_tag]%>Data   = createSelector(get<%=array_tags_upper[_tag]%>State, from<%=array_tags_upper[_tag]%>.getData);
 export const is<%=array_tags_upper[_tag]%>Loading = createSelector(get<%=array_tags_upper[_tag]%>State, from<%=array_tags_upper[_tag]%>.isLoading);
 export const is<%=array_tags_upper[_tag]%>Loaded  = createSelector(get<%=array_tags_upper[_tag]%>State, from<%=array_tags_upper[_tag]%>.isLoaded);

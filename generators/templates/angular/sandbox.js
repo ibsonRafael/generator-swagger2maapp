@@ -39,7 +39,7 @@ for (path in paths) {
   if(array_atributes.indexOf(nomeLower) == -1) {
   array_atributes.push(nomeLower);
 -%>
-    public <%=nomeLower%>$        = this.state.select(store.get<%=nomeUpper%>);
+    public <%=nomeLower%>$        = this.state.select(store.get<%=nomeUpper%>Data);
     public is<%=nomeUpper%>Loading$ = this.state.select(store.is<%=nomeUpper%>Loading);
     public is<%=nomeUpper%>Loaded$  = this.state.select(store.is<%=nomeUpper%>Loaded);
     public is<%=nomeUpper%>Failed$  = this.state.select(store.is<%=nomeUpper%>Failed);
@@ -53,9 +53,13 @@ for (path in paths) {
     if(array_atributes.indexOf(nomeLower) == -1) {
     array_atributes.push(nomeLower);
 -%>
-    public <%=nomeLower%>$        = this.state.select(store.get<%=nomeUpper%>);
+    public <%=nomeLower%>$        = this.state.select(store.get<%=nomeUpper%>Data);
     public is<%=nomeUpper%>Loading$ = this.state.select(store.is<%=nomeUpper%>Loading);
     public is<%=nomeUpper%>Loaded$  = this.state.select(store.is<%=nomeUpper%>Loaded);
+    public is<%=nomeUpper%>Created$  = this.state.select(store.is<%=nomeUpper%>Created);
+    public is<%=nomeUpper%>Updated$  = this.state.select(store.is<%=nomeUpper%>Updated);
+    public is<%=nomeUpper%>Patched$  = this.state.select(store.is<%=nomeUpper%>Patched);
+    public is<%=nomeUpper%>Deleted$  = this.state.select(store.is<%=nomeUpper%>Deleted);
     public is<%=nomeUpper%>Failed$  = this.state.select(store.is<%=nomeUpper%>Failed);
 
 <% } } -%>
